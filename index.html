@@ -1,13 +1,136 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>My First Site</title>
-  <style>body{font-family:system-ui,Arial,sans-serif;margin:0;padding:24px}</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>My Fitness Calendar</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card: #111827;
+      --txt: #e5e7eb;
+      --muted: #94a3b8;
+      --accent: #3b82f6;
+    }
+    body {
+      margin: 0;
+      font-family: system-ui, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--txt);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    header {
+      background: var(--card);
+      padding: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #1f2937;
+    }
+    .menu-icon {
+      font-size: 24px;
+      cursor: pointer;
+    }
+    .dropdown {
+      position: absolute;
+      top: 60px;
+      right: 16px;
+      background: var(--card);
+      border: 1px solid #1f2937;
+      border-radius: 10px;
+      display: none;
+      flex-direction: column;
+      min-width: 150px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
+    .dropdown a {
+      color: var(--txt);
+      text-decoration: none;
+      padding: 10px 14px;
+    }
+    .dropdown a:hover {
+      background: var(--accent);
+    }
+    main {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+    .calendar {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 8px;
+      max-width: 380px;
+      width: 100%;
+    }
+    .day {
+      background: var(--card);
+      border-radius: 8px;
+      height: 48px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-weight: 500;
+      border: 1px solid #1f2937;
+    }
+    .day.today {
+      background: var(--accent);
+      color: white;
+      font-weight: bold;
+    }
+  </style>
 </head>
 <body>
-  <h1>Hello 👋</h1>
-  <p>If you can open this on your iPhone, it worked.</p>
+  <header>
+    <h2>🏋️ My Fitness</h2>
+    <div class="menu-icon" id="menuBtn">☰</div>
+    <div class="dropdown" id="dropdown">
+      <a href="fitness.html">Fitness Tracker</a>
+      <a href="#">Goals</a>
+      <a href="#">Settings</a>
+    </div>
+  </header>
+
+  <main>
+    <div class="calendar" id="calendar"></div>
+  </main>
+
+  <script>
+    // --- Dropdown toggle ---
+    const menuBtn = document.getElementById('menuBtn');
+    const dropdown = document.getElementById('dropdown');
+    menuBtn.addEventListener('click', () => {
+      dropdown.style.display = dropdown.style.display === 'flex' ? 'none' : 'flex';
+    });
+    document.addEventListener('click', (e) => {
+      if (!dropdown.contains(e.target) && e.target !== menuBtn) dropdown.style.display = 'none';
+    });
+
+    // --- Calendar ---
+    const calendar = document.getElementById('calendar');
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = now.getMonth();
+    const today = now.getDate();
+
+    const firstDay = new Date(year, month, 1).getDay();
+    const lastDate = new Date(year, month + 1, 0).getDate();
+
+    for (let i = 0; i < firstDay; i++) {
+      const empty = document.createElement('div');
+      calendar.appendChild(empty);
+    }
+    for (let d = 1; d <= lastDate; d++) {
+      const day = document.createElement('div');
+      day.textContent = d;
+      day.className = 'day';
+      if (d === today) day.classList.add('today');
+      calendar.appendChild(day);
+    }
+  </script>
 </body>
 </html>
