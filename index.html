@@ -42,8 +42,9 @@
       border-radius: 10px;
       display: none;
       flex-direction: column;
-      min-width: 150px;
+      min-width: 160px;
       box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      z-index: 10;
     }
     .dropdown a {
       color: var(--txt);
@@ -76,11 +77,15 @@
       align-items: center;
       font-weight: 500;
       border: 1px solid #1f2937;
+      transition: background 0.2s;
     }
     .day.today {
       background: var(--accent);
       color: white;
       font-weight: bold;
+    }
+    .day:hover {
+      background: #1e293b;
     }
   </style>
 </head>
@@ -90,6 +95,7 @@
     <div class="menu-icon" id="menuBtn">☰</div>
     <div class="dropdown" id="dropdown">
       <a href="fitness.html">Fitness Tracker</a>
+      <a href="setup.html">Setup</a>
       <a href="#">Goals</a>
       <a href="#">Settings</a>
     </div>
@@ -99,7 +105,11 @@
     <div class="calendar" id="calendar"></div>
   </main>
 
+  <script src="profile.js"></script>
   <script>
+    // --- Require setup completion ---
+    requireProfile();
+
     // --- Dropdown toggle ---
     const menuBtn = document.getElementById('menuBtn');
     const dropdown = document.getElementById('dropdown');
@@ -110,7 +120,7 @@
       if (!dropdown.contains(e.target) && e.target !== menuBtn) dropdown.style.display = 'none';
     });
 
-    // --- Calendar ---
+    // --- Calendar generation ---
     const calendar = document.getElementById('calendar');
     const now = new Date();
     const year = now.getFullYear();
@@ -120,10 +130,16 @@
     const firstDay = new Date(year, month, 1).getDay();
     const lastDate = new Date(year, month + 1, 0).getDate();
 
+    // Clear existing content
+    calendar.innerHTML = '';
+
+    // Add empty slots before first day
     for (let i = 0; i < firstDay; i++) {
       const empty = document.createElement('div');
       calendar.appendChild(empty);
     }
+
+    // Add days of the month
     for (let d = 1; d <= lastDate; d++) {
       const day = document.createElement('div');
       day.textContent = d;
