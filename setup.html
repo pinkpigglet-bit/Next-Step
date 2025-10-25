@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Setup • My Fitness</title>
+<style>
+  :root{--bg:#0f172a;--card:#111827;--txt:#e5e7eb;--muted:#94a3b8;--accent:#3b82f6}
+  body{margin:0;font-family:system-ui,Arial,sans-serif;background:var(--bg);color:var(--txt)}
+  header{background:var(--card);padding:16px;border-bottom:1px solid #1f2937}
+  main{max-width:720px;margin:0 auto;padding:16px}
+  .card{background:var(--card);border:1px solid #1f2937;border-radius:16px;padding:16px;margin:12px 0}
+  label{display:block;font-size:14px;color:var(--muted);margin:8px 0 4px}
+  input,select{width:100%;padding:12px;border-radius:10px;border:1px solid #334155;background:#0b1220;color:var(--txt)}
+  button{padding:12px 16px;border:0;border-radius:12px;background:var(--accent);color:#fff;font-weight:600}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .note{color:var(--muted);font-size:13px}
+  .banner{background:#1c2436;border:1px solid #2a3a57;border-radius:12px;padding:12px;margin-bottom:12px}
+</style>
+</head>
+<body>
+<header><h2>👤 Setup</h2></header>
+<main>
+  <div id="banner" class="banner" style="display:none">Please complete your profile to continue.</div>
+
+  <div class="card">
+    <form id="setupForm" novalidate>
+      <label for="name">Name *</label>
+      <input id="name" required placeholder="Your name"/>
+
+      <div class="row">
+        <div>
+          <label for="age">Age *</label>
+          <input id="age" type="number" inputmode="numeric" min="1" required placeholder="e.g. 28"/>
+        </div>
+        <div>
+          <label for="sex">Sex (optional)</label>
+          <select id="sex">
+            <option value="">Prefer not to say</option>
+            <option>Female</option><option>Male</option><option>Other</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="row">
+        <div>
+          <label for="height">Height (cm) *</label>
+          <input id="height" type="number" inputmode="decimal" min="50" step="0.1" required placeholder="e.g. 180"/>
+        </div>
+        <div>
+          <label for="weight">Weight (kg) *</label>
+          <input id="weight" type="number" inputmode="decimal" min="20" step="0.1" required placeholder="e.g. 80.5"/>
+        </div>
+      </div>
+
+      <label for="goal">Primary goal (optional)</label>
+      <input id="goal" placeholder="e.g. Improve conditioning, jump height"/>
+
+      <p class="note">Your data is stored locally on this device (in your browser). You can edit it anytime.</p>
+      <button type="submit">Save & Continue</button>
+    </form>
+  </div>
+</main>
+
+<script src="profile.js"></script>
+<script>
+  // Show banner if redirected due to missing profile
+  if (location.hash === '#required') {
+    document.getElementById('banner').style.display = 'block';
+  }
+
+  // Prefill if existing
+  const p = getProfile();
+  if (p) {
+    document.getElementById('name').value = p.name || '';
+    document.getElementById('age').value = p.age || '';
+    document.getElementById('sex').value = p.sex || '';
+    document.getElementById('height').value = p.height_cm || '';
+    document.getElementById('weight').value = p.weight_kg || '';
+    document.getElementById('goal').value = p.goal || '';
+  }
+
+  // Save
+  document.getElementById('setupForm').addEventListener('submit', (e)=>{
+    e.preventDefault();
+    const profile = {
+      name: document.getElementById('name').value.trim(),
+      age: Number(document.getElementById('age').value),
+      sex: document.getElementById('sex').value,
+      height_cm: Number(document.getElementById('height').value),
+      weight_kg: Number(document.getElementById('weight').value),
+      goal: document.getElementById('goal').value.trim()
+    };
+    if (!isProfileComplete(profile)) {
+      alert('Please complete all required fields marked with *'); return;
+    }
+    saveProfile(profile);
+    // Go to home after save
+    location.replace('index.html');
+  });
+</script>
+</body>
+</html>
